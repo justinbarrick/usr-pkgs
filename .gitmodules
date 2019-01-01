@@ -1,3 +1,9 @@
 [submodule "polybar"]
 	path = polybar
 	url = https://aur.archlinux.org/polybar.git
+[submodule "cower"]
+	path = cower
+	url = https://aur.archlinux.org/cower.git
+[submodule "pacaur"]
+	path = pacaur
+	url = https://aur.archlinux.org/pacaur.git

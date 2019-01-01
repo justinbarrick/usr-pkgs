@@ -4,3 +4,5 @@ RUN pacman -Sy --noconfirm --force base-devel sudo binutils cmake && useradd -m 
       && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER user
+
+RUN mkdir ~/.gnupg && echo keyserver-options auto-key-retrieve > ~/.gnupg/gpg.conf

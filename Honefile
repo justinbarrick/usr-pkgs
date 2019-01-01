@@ -1,14 +1,46 @@
-env = [
-    "POLYBAR_VERSION=3.3.0-1",
-    "POLYBAR_PATH=polybar/polybar-3.3.0-1-x86_64.pkg.tar.xz",
+secrets = [
     "S3_ACCESS_KEY",
     "S3_SECRET_KEY",
     "DOCKER_USER",
     "DOCKER_PASS"
 ]
 
+env = [
+    "POLYBAR_VERSION=3.3.0-1",
+    "POLYBAR_PATH=polybar/polybar-3.3.0-1-x86_64.pkg.tar.xz",
+    "PACAUR_VERSION=4.7.90-1",
+    "PACAUR_PATH=pacaur/pacaur-4.7.90-1-any.pkg.tar.xz",
+    "COWER_VERSION=18-1",
+    "COWER_PATH=cower/cower-18-1-x86_64.pkg.tar.xz",
+    "S3_ACCESS_KEY",
+    "S3_SECRET_KEY",
+    "S3_ENDPOINT=sfo2.digitaloceanspaces.com",
+    "S3_BUCKET=codesink-cache",
+    "S3_ENABLED=false",
+    "DOCKER_USER",
+    "DOCKER_PASS",
+    "VAULT_ADDR",
+    "VAULT_TOKEN",
+]
+
+vault {
+    address = "${environ.VAULT_ADDR}"
+    token = "${environ.VAULT_TOKEN}"
+}
+
+cache {
+    s3 {
+        access_key = "${environ.S3_ACCESS_KEY}"
+        secret_key = "${environ.S3_SECRET_KEY}"
+        endpoint = "${environ.S3_ENDPOINT}"
+        bucket = "${environ.S3_BUCKET}"
+        disabled = "${environ.S3_ENABLED != "true"}"
+    }
+}
+
 template "default" {
     image = "justinbarrick/arch-builder:builder"
+    shell = "makepkg -s -f --noconfirm"
 }
 
 job "builder" {
@@ -34,35 +66,76 @@ job "polybar" {
     outputs = ["${environ.POLYBAR_PATH}"]
 
     workdir = "polybar"
+}
 
-    shell = "makepkg -s --noconfirm"
+job "cower" {
+    deps = ["builder"]
+
+    inputs = ["cower/PKGBUILD"]
+    outputs = ["${environ.COWER_PATH}"]
+
+    workdir = "cower"
+}
+
+job "pacaur" {
+    deps = ["builder", "cower"]
+
+    inputs = ["pacaur/PKGBUILD", "${environ.COWER_PATH}"]
+    outputs = ["${environ.PACAUR_PATH}"]
+
+    workdir = "pacaur"
+
+    shell = "sudo pacman -U --noconfirm ../${environ.COWER_PATH} && makepkg -f -s --noconfirm"
 }
 
 job "repo" {
-    deps = ["polybar"]
+    deps = ["polybar", "cower", "pacaur"]
 
     inputs = ["${environ.POLYBAR_PATH}"]
     outputs = [
-        "repo/*",
+        "repo/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz",
+        "repo/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz",
+        "repo/pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz",
+        "repo/usr.db",
+        "repo/usr.db.tar.gz",
+        "repo/usr.files",
+        "repo/usr.files.tar.gz"
     ]
 
     shell = <<EOF
 rm -rf repo/
+mkdir repo/
 cp ${environ.POLYBAR_PATH} repo/
+cp ${environ.COWER_PATH} repo/
+cp ${environ.PACAUR_PATH} repo/
 cd repo/
-repo-add usr.db polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz
+repo-add usr.db.tar.gz polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz
+repo-add usr.db.tar.gz cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz
+repo-add usr.db.tar.gz pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz
 EOF
 }
 
 job "release" {
     deps = ["repo"]
 
-    inputs = ["repo/*"]
+    image = "goreleaser/goreleaser:v0.95"
+
+    inputs = [
+        "repo/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz",
+        "repo/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz",
+        "repo/pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz",
+        "repo/usr.db",
+        "repo/usr.db.tar.gz",
+        "repo/usr.files",
+        "repo/usr.files.tar.gz"
+    ]
 
     env = {
         "AWS_ACCESS_KEY_ID" = "${environ.S3_ACCESS_KEY}"
         "AWS_SECRET_ACCESS_KEY" = "${environ.S3_SECRET_KEY}"
     }
 
-    shell = "goreleaser release"
+    shell = "goreleaser release "
+
+    condition = "GIT_TAG!=''"
 }
