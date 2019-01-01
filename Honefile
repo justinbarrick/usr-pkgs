@@ -1,0 +1,68 @@
+env = [
+    "POLYBAR_VERSION=3.3.0-1",
+    "POLYBAR_PATH=polybar/polybar-3.3.0-1-x86_64.pkg.tar.xz",
+    "S3_ACCESS_KEY",
+    "S3_SECRET_KEY",
+    "DOCKER_USER",
+    "DOCKER_PASS"
+]
+
+template "default" {
+    image = "justinbarrick/arch-builder:builder"
+}
+
+job "builder" {
+    image = "justinbarrick/kaniko:latest"
+
+    env = {
+        "DOCKER_USER" = "${environ.DOCKER_USER}",
+        "DOCKER_PASS" = "${environ.DOCKER_PASS}",
+    }
+
+    inputs = ["builder/Dockerfile"]
+
+    shell = <<EOF
+kaniko --dockerfile=builder/Dockerfile --context=/build/builder/ \
+    --destination=${environ.DOCKER_USER}/arch-builder:builder
+EOF
+}
+
+job "polybar" {
+    deps = ["builder"]
+
+    inputs = ["polybar/PKGBUILD", "polybar/polybar.install"]
+    outputs = ["${environ.POLYBAR_PATH}"]
+
+    workdir = "polybar"
+
+    shell = "makepkg -s --noconfirm"
+}
+
+job "repo" {
+    deps = ["polybar"]
+
+    inputs = ["${environ.POLYBAR_PATH}"]
+    outputs = [
+        "repo/*",
+    ]
+
+    shell = <<EOF
+rm -rf repo/
+cp ${environ.POLYBAR_PATH} repo/
+cd repo/
+repo-add usr.db polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz
+EOF
+}
+
+job "release" {
+    deps = ["repo"]
+
+    inputs = ["repo/*"]
+
+    env = {
+        "AWS_ACCESS_KEY_ID" = "${environ.S3_ACCESS_KEY}"
+        "AWS_SECRET_ACCESS_KEY" = "${environ.S3_SECRET_KEY}"
+    }
+
+    shell = "goreleaser release"
+}

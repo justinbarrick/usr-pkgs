@@ -1,0 +1,6 @@
+s3:
+  - bucket: codesink-arch
+    region: us-east-1
+    folder: "/"
+    endpoint: "https://sfo2.digitaloceanspaces.com"
+    acl: public-read

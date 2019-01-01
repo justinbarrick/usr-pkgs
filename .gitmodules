@@ -1,0 +1,3 @@
+[submodule "polybar"]
+	path = polybar
+	url = https://aur.archlinux.org/polybar.git
