@@ -113,7 +113,7 @@ job "termsyn-font" {
         "pkgs/termsyn-font/termsyn-font.install",
     ]
     outputs = [
-        "pkgs/termsyn-font/termsyn-font-${environ.TERMSYN_VERSION}-all.pkg.tar.xz"
+        "pkgs/termsyn-font/termsyn-font-${environ.TERMSYN_VERSION}-any.pkg.tar.xz"
     ]
 
     workdir = "pkgs/termsyn-font"
@@ -162,11 +162,23 @@ job "repo" {
     ]
 
     inputs = [
-        "pkgs/**/*.pkg.tar.xz"
+        "pkgs/polybar/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/cower/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/pacaur/pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz",
+        "pkgs/termsyn-font/termsyn-font-${environ.TERMSYN_VERSION}-any.pkg.tar.xz",
+        "pkgs/ttf-font-awesome-4/ttf-font-awesome-4-${environ.FONT_AWESOME_VERSION}-any.pkg.tar.xz",
+        "pkgs/ttf-material-design-icons/ttf-material-design-icons-${environ.MATERIAL_DESIGN_VERSION}-any.pkg.tar.xz",
+        "pkgs/ttf-unifont/ttf-unifont-${environ.UNIFONT_VERSION}-any.pkg.tar.xz"
     ]
 
     outputs = [
-        "repo/*.pkg.tar.xz",
+        "repo/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz",
+        "repo/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz",
+        "repo/pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz",
+        "repo/termsyn-font-${environ.TERMSYN_VERSION}-any.pkg.tar.xz",
+        "repo/ttf-font-awesome-4-${environ.FONT_AWESOME_VERSION}-any.pkg.tar.xz",
+        "repo/ttf-material-design-icons-${environ.MATERIAL_DESIGN_VERSION}-any.pkg.tar.xz",
+        "repo/ttf-unifont-${environ.UNIFONT_VERSION}-any.pkg.tar.xz",
         "repo/usr.db",
         "repo/usr.db.tar.gz",
         "repo/usr.files",
