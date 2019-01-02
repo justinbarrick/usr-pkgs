@@ -188,7 +188,7 @@ job "repo" {
     shell = <<EOF
 rm -rf repo/
 mkdir repo/
-cp pkg/**/*.pkg.tar.xz repo/
+cp pkgs/**/*.pkg.tar.xz repo/
 cd repo/
 repo-add usr.db.tar.gz *.pkg.tar.xz
 EOF
