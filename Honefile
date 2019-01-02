@@ -137,7 +137,8 @@ job "release" {
     }
 
     shell = <<EOF
-mc mb codesink/codesink-arch
+mc ls codesink/codesink-arch || mc mb codesink/codesink-arch
+mc policy download codesink/codesink-arch || :
 mc cp --recursive repo/ codesink/codesink-arch/
 EOF
 }
