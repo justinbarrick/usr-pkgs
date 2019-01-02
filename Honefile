@@ -8,11 +8,12 @@ secrets = [
 
 env = [
     "POLYBAR_VERSION=3.3.0-1",
-    "POLYBAR_PATH=polybar/polybar-3.3.0-1-x86_64.pkg.tar.xz",
     "PACAUR_VERSION=4.7.90-1",
-    "PACAUR_PATH=pacaur/pacaur-4.7.90-1-any.pkg.tar.xz",
     "COWER_VERSION=18-1",
-    "COWER_PATH=cower/cower-18-1-x86_64.pkg.tar.xz",
+    "TERMSYN_VERSION=1.8.7-1",
+    "FONT_AWESOME_VERSION=4.7.0-5",
+    "MATERIAL_DESIGN_VERSION=3.0.1-1",
+    "UNIFONT_VERSION=11.0.03-1",
     "S3_ACCESS_KEY",
     "S3_SECRET_KEY",
     "S3_ENDPOINT=sfo2.digitaloceanspaces.com",
@@ -64,40 +65,108 @@ EOF
 job "polybar" {
     deps = ["builder"]
 
-    inputs = ["polybar/PKGBUILD", "polybar/polybar.install"]
-    outputs = ["${environ.POLYBAR_PATH}"]
+    inputs = [
+        "pkgs/polybar/PKGBUILD", "pkgs/polybar/polybar.install"
+    ]
+    outputs = [
+        "pkgs/polybar/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz"
+    ]
 
-    workdir = "polybar"
+    workdir = "pkgs/polybar"
 }
 
 job "cower" {
     deps = ["builder"]
 
-    inputs = ["cower/PKGBUILD"]
-    outputs = ["${environ.COWER_PATH}"]
+    inputs = ["pkgs/cower/PKGBUILD"]
+    outputs = [
+        "pkgs/cower/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz"
+    ]
 
-    workdir = "cower"
+    workdir = "pkgs/cower"
 }
 
 job "pacaur" {
     deps = ["builder", "cower"]
 
-    inputs = ["pacaur/PKGBUILD", "${environ.COWER_PATH}"]
-    outputs = ["${environ.PACAUR_PATH}"]
+    inputs = [
+        "pkgs/pacaur/PKGBUILD",
+        "pkgs/cower/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz"
+    ]
+    outputs = [
+        "pkgs/pacaur/pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz"
+    ]
 
-    workdir = "pacaur"
+    workdir = "pkgs/pacaur"
 
-    shell = "sudo pacman -U --noconfirm ../${environ.COWER_PATH} && makepkg -f -s --noconfirm"
+    shell = <<EOF
+sudo pacman -U --noconfirm ../cower/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz
+makepkg -f -s --noconfirm
+EOF
+}
+
+job "termsyn-font" {
+    deps = ["builder"]
+
+    inputs = [
+        "pkgs/termsyn-font/PKGBUILD",
+        "pkgs/termsyn-font/termsyn-font.install",
+    ]
+    outputs = [
+        "pkgs/termsyn-font/termsyn-font-${environ.TERMSYN_VERSION}-all.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/termsyn-font"
+}
+
+job "ttf-font-awesome-4" {
+    deps = ["builder"]
+
+    inputs = [
+        "pkgs/ttf-font-awesome-4/PKGBUILD",
+        "pkgs/ttf-font-awesome-4/OFL"
+    ]
+    outputs = [
+        "pkgs/ttf-font-awesome-4/ttf-font-awesome-4-${environ.FONT_AWESOME_VERSION}-any.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/ttf-font-awesome-4"
+}
+
+job "ttf-material-design-icons" {
+    deps = ["builder"]
+
+    inputs = ["pkgs/ttf-material-design-icons/PKGBUILD"]
+    outputs = [
+        "pkgs/ttf-material-design-icons/ttf-material-design-icons-${environ.MATERIAL_DESIGN_VERSION}-any.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/ttf-material-design-icons"
+}
+
+job "ttf-unifont" {
+    deps = ["builder"]
+
+    inputs = ["pkgs/ttf-unifont/PKGBUILD"]
+    outputs = [
+        "pkgs/ttf-unifont/ttf-unifont-${environ.UNIFONT_VERSION}-any.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/ttf-unifont"
 }
 
 job "repo" {
-    deps = ["polybar", "cower", "pacaur"]
+    deps = [
+        "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
+        "ttf-material-design-icons", "ttf-unifont"
+    ]
 
-    inputs = ["${environ.POLYBAR_PATH}"]
+    inputs = [
+        "pkgs/**/*.pkg.tar.xz"
+    ]
+
     outputs = [
-        "repo/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz",
-        "repo/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz",
-        "repo/pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz",
+        "repo/*.pkg.tar.xz",
         "repo/usr.db",
         "repo/usr.db.tar.gz",
         "repo/usr.files",
@@ -107,13 +176,9 @@ job "repo" {
     shell = <<EOF
 rm -rf repo/
 mkdir repo/
-cp ${environ.POLYBAR_PATH} repo/
-cp ${environ.COWER_PATH} repo/
-cp ${environ.PACAUR_PATH} repo/
+cp pkg/**/*.pkg.tar.xz repo/
 cd repo/
-repo-add usr.db.tar.gz polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz
-repo-add usr.db.tar.gz cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz
-repo-add usr.db.tar.gz pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz
+repo-add usr.db.tar.gz *.pkg.tar.xz
 EOF
 }
 
@@ -123,9 +188,7 @@ job "release" {
     image = "minio/mc:RELEASE.2018-12-27T00-37-49Z"
 
     inputs = [
-        "repo/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz",
-        "repo/cower-${environ.COWER_VERSION}-x86_64.pkg.tar.xz",
-        "repo/pacaur-${environ.PACAUR_VERSION}-any.pkg.tar.xz",
+        "repo/*.pkg.tar.xz",
         "repo/usr.db",
         "repo/usr.db.tar.gz",
         "repo/usr.files",

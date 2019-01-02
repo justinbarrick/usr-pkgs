@@ -1,12 +1,24 @@
 [submodule "polybar"]
-	path = polybar
+	path = pkgs/polybar
 	url = https://aur.archlinux.org/polybar.git
 	ignore = all
 [submodule "cower"]
-	path = cower
+	path = pkgs/cower
 	url = https://aur.archlinux.org/cower.git
 	ignore = all
 [submodule "pacaur"]
-	path = pacaur
+	path = pkgs/pacaur
 	url = https://aur.archlinux.org/pacaur.git
 	ignore = all
+[submodule "termsyn-font"]
+	path = pkgs/termsyn-font
+	url = https://aur.archlinux.org/termsyn-font.git
+[submodule "ttf-material-design-icons"]
+	path = pkgs/ttf-material-design-icons
+	url = https://aur.archlinux.org/ttf-material-design-icons.git
+[submodule "ttf-unifont"]
+	path = pkgs/ttf-unifont
+	url = https://aur.archlinux.org/ttf-unifont.git
+[submodule "ttf-font-awesome-4"]
+	path = pkgs/ttf-font-awesome-4
+	url = https://aur.archlinux.org/ttf-font-awesome-4.git
