@@ -72,6 +72,11 @@ job "polybar" {
         "pkgs/polybar/polybar-${environ.POLYBAR_VERSION}-x86_64.pkg.tar.xz"
     ]
 
+    shell = <<EOF
+sudo pacman -S --noconfirm curl alsa-lib pulseaudio i3-wm jsoncpp 
+makepkg -f -s --noconfirm
+EOF
+
     workdir = "pkgs/polybar"
 }
 
