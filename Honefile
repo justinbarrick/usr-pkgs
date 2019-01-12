@@ -14,11 +14,14 @@ env = [
     "FONT_AWESOME_VERSION=4.7.0-5",
     "MATERIAL_DESIGN_VERSION=3.0.1-1",
     "UNIFONT_VERSION=11.0.03-1",
-    "LIBRESWAN_VERSION=",
-    "PXZ_VERSION=",
-    "PYTHON35_VERSION=",
-    "TOUCHEGG_VERSION=",
-    "PPP_VERSION=",
+    "GEIS_VERSION=2.2.17-2",
+    "GRAIL_VERSION=3.1.1-1",
+    "FRAME_VERSION=2.5.0-1",
+    "LIBRESWAN_VERSION=3.27-1",
+    "PXZ_VERSION=r56.fcfea93-1",
+    "PYTHON35_VERSION=3.5.6-1",
+    "TOUCHEGG_VERSION=1.1.1-3",
+    "PPP_VERSION=2.4.7-6",
     "S3_ACCESS_KEY",
     "S3_SECRET_KEY",
     "S3_ENDPOINT=sfo2.digitaloceanspaces.com",
@@ -165,6 +168,65 @@ job "ttf-unifont" {
     workdir = "pkgs/ttf-unifont"
 }
 
+job "frame" {
+    deps = ["builder"]
+
+    inputs = ["pkgs/frame/PKGBUILD"]
+    outputs = [
+        "pkgs/frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    shell = <<EOF
+sudo pacman -S --noconfirm xorg-server
+sudo pacman -U --noconfirm ../frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz
+makepkg -f -s --noconfirm
+EOF
+
+    workdir = "pkgs/frame"
+}
+
+job "grail" {
+    deps = ["builder", "frame"]
+
+    inputs = [
+        "pkgs/grail/PKGBUILD",
+        "pkgs/frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz"
+    ]
+    outputs = [
+        "pkgs/grail/grail-${environ.GRAIL_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    shell = <<EOF
+sudo pacman -S --noconfirm xorg-server
+sudo pacman -U --noconfirm ../frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz
+makepkg -f -s --noconfirm
+EOF
+
+    workdir = "pkgs/grail"
+}
+
+job "geis" {
+    deps = ["builder", "grail", "frame"]
+
+    inputs = [
+        "pkgs/geis/PKGBUILD",
+        "pkgs/grail/grail-${environ.GRAIL_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz"
+    ]
+    outputs = [
+        "pkgs/geis/geis-${environ.GEIS_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    shell = <<EOF
+sudo pacman -S --noconfirm xorg-server
+sudo pacman -U --noconfirm ../frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz
+sudo pacman -U --noconfirm ../grail/grail-${environ.GRAIL_VERSION}-x86_64.pkg.tar.xz
+makepkg -f -s --noconfirm
+EOF
+
+    workdir = "pkgs/geis"
+}
+
 job "libreswan" {
     deps = ["builder"]
 
@@ -199,14 +261,27 @@ job "python35" {
 }
 
 job "touchegg" {
-    deps = ["builder"]
+    deps = ["builder", "geis", "grail", "frame"]
 
-    inputs = ["pkgs/touchegg/PKGBUILD"]
+    inputs = [
+        "pkgs/touchegg/PKGBUILD",
+        "pkgs/geis/geis-${environ.GEIS_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/grail/grail-${environ.GRAIL_VERSION}-x86_64.pkg.tar.xz"
+    ]
     outputs = [
         "pkgs/touchegg/touchegg-${environ.TOUCHEGG_VERSION}-x86_64.pkg.tar.xz"
     ]
 
     workdir = "pkgs/touchegg"
+
+    shell = <<EOF
+sudo pacman -S --noconfirm libxtst
+sudo pacman -U --noconfirm ../frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz
+sudo pacman -U --noconfirm ../grail/grail-${environ.GRAIL_VERSION}-x86_64.pkg.tar.xz
+sudo pacman -U --noconfirm ../geis/geis-${environ.GEIS_VERSION}-x86_64.pkg.tar.xz
+makepkg -f -s --noconfirm
+EOF
 }
 
 job "ppp" {
@@ -239,7 +314,7 @@ job "repo" {
     deps = [
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
         "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
-        "python35", "touchegg", "ppp"
+        "python35", "touchegg", "ppp", "geis", "grail", "frame"
     ]
 
     inputs = [
@@ -254,7 +329,10 @@ job "repo" {
         "pkgs/pxz-git/pxz-git-${environ.PXZ_VERSION}-x86_64.pkg.tar.xz",
         "pkgs/python35/python35-${environ.PYTHON35_VERSION}-x86_64.pkg.tar.xz",
         "pkgs/touchegg/touchegg-${environ.TOUCHEGG_VERSION}-x86_64.pkg.tar.xz",
-        "pkgs/ppp/ppp-${environ.PPP_VERSION}-x86_64.pkg.tar.xz"
+        "pkgs/ppp/ppp-${environ.PPP_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/geis/geis-${environ.GEIS_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/grail/grail-${environ.GRAIL_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/frame/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz"
     ]
 
     outputs = [
@@ -265,11 +343,14 @@ job "repo" {
         "repo/ttf-font-awesome-4-${environ.FONT_AWESOME_VERSION}-any.pkg.tar.xz",
         "repo/ttf-material-design-icons-${environ.MATERIAL_DESIGN_VERSION}-any.pkg.tar.xz",
         "repo/ttf-unifont-${environ.UNIFONT_VERSION}-any.pkg.tar.xz",
-        "repo/libreswan/libreswan-${environ.LIBRESWAN_VERSION}-x86_64.pkg.tar.xz",
-        "repo/pxz-git/pxz-git-${environ.PXZ_VERSION}-x86_64.pkg.tar.xz",
-        "repo/python35/python35-${environ.PYTHON35_VERSION}-x86_64.pkg.tar.xz",
-        "repo/touchegg/touchegg-${environ.TOUCHEGG_VERSION}-x86_64.pkg.tar.xz",
-        "repo/ppp/ppp-${environ.PPP_VERSION}-x86_64.pkg.tar.xz",
+        "repo/libreswan-${environ.LIBRESWAN_VERSION}-x86_64.pkg.tar.xz",
+        "repo/pxz-git-${environ.PXZ_VERSION}-x86_64.pkg.tar.xz",
+        "repo/python35-${environ.PYTHON35_VERSION}-x86_64.pkg.tar.xz",
+        "repo/touchegg-${environ.TOUCHEGG_VERSION}-x86_64.pkg.tar.xz",
+        "repo/ppp-${environ.PPP_VERSION}-x86_64.pkg.tar.xz",
+        "repo/geis-${environ.GEIS_VERSION}-x86_64.pkg.tar.xz",
+        "repo/grail-${environ.GRAIL_VERSION}-x86_64.pkg.tar.xz",
+        "repo/frame-${environ.FRAME_VERSION}-x86_64.pkg.tar.xz",
         "repo/usr.db",
         "repo/usr.db.tar.gz",
         "repo/usr.files",

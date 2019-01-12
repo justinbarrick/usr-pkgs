@@ -34,3 +34,12 @@
 [submodule "pkgs/libreswan"]
 	path = pkgs/libreswan
 	url = https://aur.archlinux.org/libreswan.git
+[submodule "geis"]
+	path = pkgs/geis
+	url = https://aur.archlinux.org/geis.git
+[submodule "pkgs/grail"]
+	path = pkgs/grail
+	url = https://aur.archlinux.org/grail.git
+[submodule "pkgs/frame"]
+	path = pkgs/frame
+	url = https://aur.archlinux.org/frame.git
