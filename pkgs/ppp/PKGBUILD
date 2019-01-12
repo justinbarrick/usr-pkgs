@@ -1,7 +1,7 @@
 # Maintainer: Thomas Baechler <thomas@archlinux.org>
 pkgname=ppp
 pkgver=2.4.7
-pkgrel=5
+pkgrel=6
 pkgdesc="A daemon which implements the Point-to-Point Protocol for dial-up networking"
 arch=(x86_64)
 url="http://www.samba.org/ppp/"
@@ -37,7 +37,7 @@ sha256sums=('02e0a3dd3e4799e33103f70ec7df75348c8540966ee7c948e4ed8a42bbccfb30'
             '20780cf4bd0774bebb55ecb3bdae7667c9ae5cbe003a52a1ecb0bbc77d46260f'
             'eb8ab2e2d71c3bb9c4297cf847b6e9d52616a3fdbf2257c479cc43dff318c831'
             'f0fe7e7d9b35141c2565a09e39c4f66b475ed3fe8e2528d10faa4412f480e338'
-            '57fe32e623ffc791a1614eb0d2d1ebc1bbde36360896767e7b5dff33111c8cfa'
+            '12682431931b3c03ad9c029659d3d4aa804c9c541f51821115b45af60f909009'
             '94225c64e806e75d6f792649c4beb26a791c4994c2701dc6a47cfccf3d91e4bf'
             '3f199d83d2632274dbbe7345e5369891469f64642f28e4afb471747a88888b62'
             '96fd35104e3d0ec472517afecead88419913ae73ae0189476d5dad9029c2be42')

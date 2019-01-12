@@ -1,20 +1,20 @@
 Remove the check for default route since we want to set it as the user expects.
-
---- a/pppd/sys-linux.c
-+++ b/pppd/sys-linux.c
-@@ -1641,16 +1641,6 @@ int sifdefaultroute (int unit, u_int32_t ouraddr, u_int32_t gateway)
+--- a/pppd/sys-linux.c	2019-01-11 18:25:55.842141975 -0800
++++ b/pppd/sys-linux.c	2019-01-11 18:26:03.168808515 -0800
+@@ -1620,16 +1620,6 @@
  {
      struct rtentry rt;
  
--    if (defaultroute_exists(&rt, dfl_route_metric) && strcmp(rt.rt_dev, ifname) != 0) {
--       if (rt.rt_flags & RTF_GATEWAY)
--           error("not replacing existing default route via %I with metric %d",
--                 SIN_ADDR(rt.rt_gateway), dfl_route_metric);
--       else
--           error("not replacing existing default route through %s with metric %d",
--                 rt.rt_dev, dfl_route_metric);
--       return 0;
+-    if (defaultroute_exists(&rt) && strcmp(rt.rt_dev, ifname) != 0) {
+-	if (rt.rt_flags & RTF_GATEWAY)
+-	    error("not replacing existing default route via %I",
+-		  SIN_ADDR(rt.rt_gateway));
+-	else
+-	    error("not replacing existing default route through %s",
+-		  rt.rt_dev);
+-	return 0;
 -    }
 -
      memset (&rt, 0, sizeof (rt));
      SET_SA_FAMILY (rt.rt_dst, AF_INET);
+ 

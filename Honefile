@@ -14,6 +14,11 @@ env = [
     "FONT_AWESOME_VERSION=4.7.0-5",
     "MATERIAL_DESIGN_VERSION=3.0.1-1",
     "UNIFONT_VERSION=11.0.03-1",
+    "LIBRESWAN_VERSION=",
+    "PXZ_VERSION=",
+    "PYTHON35_VERSION=",
+    "TOUCHEGG_VERSION=",
+    "PPP_VERSION=",
     "S3_ACCESS_KEY",
     "S3_SECRET_KEY",
     "S3_ENDPOINT=sfo2.digitaloceanspaces.com",
@@ -160,10 +165,81 @@ job "ttf-unifont" {
     workdir = "pkgs/ttf-unifont"
 }
 
+job "libreswan" {
+    deps = ["builder"]
+
+    inputs = ["pkgs/libreswan/PKGBUILD", "pkgs/libreswan/tmpfiles.conf"]
+    outputs = [
+        "pkgs/libreswan/libreswan-${environ.LIBRESWAN_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/libreswan"
+}
+
+job "pxz-git" {
+    deps = ["builder"]
+
+    inputs = ["pkgs/pxz-git/PKGBUILD"]
+    outputs = [
+        "pkgs/pxz-git/pxz-git-${environ.PXZ_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/pxz-git"
+}
+
+job "python35" {
+    deps = ["builder"]
+
+    inputs = ["pkgs/python35/PKGBUILD"]
+    outputs = [
+        "pkgs/python35/python35-${environ.PYTHON35_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/python35"
+}
+
+job "touchegg" {
+    deps = ["builder"]
+
+    inputs = ["pkgs/touchegg/PKGBUILD"]
+    outputs = [
+        "pkgs/touchegg/touchegg-${environ.TOUCHEGG_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/touchegg"
+}
+
+job "ppp" {
+    deps = ["builder"]
+
+    inputs = [
+        "pkgs/ppp/PKGBUILD",
+        "pkgs/ppp/CVE-2015-3310.patch",
+        "pkgs/ppp/default-route.patch",
+        "pkgs/ppp/ip-down",
+        "pkgs/ppp/ip-down.d.dns.sh",
+        "pkgs/ppp/ip-up",
+        "pkgs/ppp/ip-up.d.dns.sh",
+        "pkgs/ppp/ipv6-down",
+        "pkgs/ppp/ipv6-up",
+        "pkgs/ppp/ipv6-up.d.iface-config.sh",
+        "pkgs/ppp/LICENSE",
+        "pkgs/ppp/options",
+        "pkgs/ppp/ppp-2.4.6-makefiles.patch",
+        "pkgs/ppp/ppp.systemd",
+    ]
+    outputs = [
+        "pkgs/ppp/ppp-${environ.PPP_VERSION}-x86_64.pkg.tar.xz"
+    ]
+
+    workdir = "pkgs/ppp"
+}
+
 job "repo" {
     deps = [
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
-        "ttf-material-design-icons", "ttf-unifont"
+        "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
+        "python35", "touchegg", "ppp"
     ]
 
     inputs = [
@@ -173,7 +249,12 @@ job "repo" {
         "pkgs/termsyn-font/termsyn-font-${environ.TERMSYN_VERSION}-any.pkg.tar.xz",
         "pkgs/ttf-font-awesome-4/ttf-font-awesome-4-${environ.FONT_AWESOME_VERSION}-any.pkg.tar.xz",
         "pkgs/ttf-material-design-icons/ttf-material-design-icons-${environ.MATERIAL_DESIGN_VERSION}-any.pkg.tar.xz",
-        "pkgs/ttf-unifont/ttf-unifont-${environ.UNIFONT_VERSION}-any.pkg.tar.xz"
+        "pkgs/ttf-unifont/ttf-unifont-${environ.UNIFONT_VERSION}-any.pkg.tar.xz",
+        "pkgs/libreswan/libreswan-${environ.LIBRESWAN_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/pxz-git/pxz-git-${environ.PXZ_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/python35/python35-${environ.PYTHON35_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/touchegg/touchegg-${environ.TOUCHEGG_VERSION}-x86_64.pkg.tar.xz",
+        "pkgs/ppp/ppp-${environ.PPP_VERSION}-x86_64.pkg.tar.xz"
     ]
 
     outputs = [
@@ -184,6 +265,11 @@ job "repo" {
         "repo/ttf-font-awesome-4-${environ.FONT_AWESOME_VERSION}-any.pkg.tar.xz",
         "repo/ttf-material-design-icons-${environ.MATERIAL_DESIGN_VERSION}-any.pkg.tar.xz",
         "repo/ttf-unifont-${environ.UNIFONT_VERSION}-any.pkg.tar.xz",
+        "repo/libreswan/libreswan-${environ.LIBRESWAN_VERSION}-x86_64.pkg.tar.xz",
+        "repo/pxz-git/pxz-git-${environ.PXZ_VERSION}-x86_64.pkg.tar.xz",
+        "repo/python35/python35-${environ.PYTHON35_VERSION}-x86_64.pkg.tar.xz",
+        "repo/touchegg/touchegg-${environ.TOUCHEGG_VERSION}-x86_64.pkg.tar.xz",
+        "repo/ppp/ppp-${environ.PPP_VERSION}-x86_64.pkg.tar.xz",
         "repo/usr.db",
         "repo/usr.db.tar.gz",
         "repo/usr.files",

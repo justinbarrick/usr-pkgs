@@ -22,3 +22,15 @@
 [submodule "ttf-font-awesome-4"]
 	path = pkgs/ttf-font-awesome-4
 	url = https://aur.archlinux.org/ttf-font-awesome-4.git
+[submodule "pkgs/pxz-git"]
+	path = pkgs/pxz-git
+	url = https://aur.archlinux.org/pxz-git.git
+[submodule "pkgs/python35"]
+	path = pkgs/python35
+	url = https://aur.archlinux.org/python35.git
+[submodule "pkgs/touchegg"]
+	path = pkgs/touchegg
+	url = https://aur.archlinux.org/touchegg.git
+[submodule "pkgs/libreswan"]
+	path = pkgs/libreswan
+	url = https://aur.archlinux.org/libreswan.git
