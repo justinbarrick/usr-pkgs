@@ -43,3 +43,6 @@
 [submodule "pkgs/frame"]
 	path = pkgs/frame
 	url = https://aur.archlinux.org/frame.git
+[submodule "pkgs/zoom"]
+	path = pkgs/zoom
+	url = https://aur.archlinux.org/zoom.git
