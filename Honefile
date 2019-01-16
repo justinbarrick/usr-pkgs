@@ -166,11 +166,12 @@ job "grail" {
 }
 
 job "geis" {
-    deps = ["builder", "grail", "frame"]
+    deps = ["builder", "frame", "grail"]
 
     env = {
         "VERSION" = "2.2.17-2"
         "ARCH" = "x86_64"
+        "DEPS" = "xorg-server"
     }
 }
 
@@ -196,11 +197,12 @@ job "python35" {
 }
 
 job "touchegg" {
-    deps = ["builder", "geis", "grail", "frame"]
+    deps = ["builder", "frame", "grail", "geis"]
 
     env = {
         "VERSION" = "1.1.1-3"
         "ARCH" = "x86_64"
+        "DEPS" = "libxtst"
     }
 }
 
@@ -235,13 +237,20 @@ job "zoom" {
     }
 }
 
+job "minidcos" {
+    env = {
+        "VERSION" = "2019.01.10.0-3"
+        "ARCH" = "x86_64"
+    }
+}
+
 job "repo" {
     template = "builder"
 
     deps = [
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
         "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
-        "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom"
+        "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom", "minidcos"
     ]
 
     inputs = [

@@ -1,0 +1,15 @@
+pkgname=minidcos
+pkgver=2019.01.10.0
+pkgrel=3
+pkgdesc="miniDC/OS can be used for spinning up and managing DC/OS clusters in test environments."
+arch=('x86_64')
+url="http://github.com/dcos/dcos-e2e"
+license=('Apache2')
+source=("https://github.com/dcos/dcos-e2e/releases/download/$pkgver/minidcos")
+sha256sums=('eacc1f22253a25d5a6b3fa8520ce0bad283ee3ff7f706579b5ca5ada869120f4')
+
+package() {
+  install -Dm755 minidcos "$pkgdir/usr/bin/minidcos"
+}
+
+# vim: ft=sh syn=sh
