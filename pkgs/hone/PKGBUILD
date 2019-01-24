@@ -1,0 +1,15 @@
+pkgname=hone
+pkgver=v0.5.0
+pkgrel=1
+pkgdesc="A build tool designed to make quality CI configurations and incremental builds effortless."
+arch=('x86_64')
+url="http://github.com/justinbarrick/hone"
+license=('Apache')
+source=("https://github.com/justinbarrick/hone/releases/download/$pkgver/hone")
+sha256sums=('d49160081fe6938a8c82821d5004e2e5eeb107684568c4a3f16f25b1d711e043')
+
+package() {
+  install -Dm755 hone "$pkgdir/usr/bin/hone"
+}
+
+# vim: ft=sh syn=sh

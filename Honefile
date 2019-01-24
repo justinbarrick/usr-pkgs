@@ -39,11 +39,13 @@ if [ ! -z "$DEPS" ]; then
     sudo pacman -Sy --force --noconfirm $DEPS
 fi
 
-${join(formatList("sudo pacman -U --noconfirm %s", [
-    for dep in self.deps:
-        pathjoin("../../", jobs[dep].outputs[0])
-    if dep != "builder"
-]), " && ")}
+if [ "${join(self.deps, "")}" != "builder" ]; then
+    ${format("sudo pacman -U --noconfirm %s", join([
+        for dep in self.deps:
+            pathjoin("../../", jobs[dep].outputs[0])
+        if dep != "builder"
+    ], " "))}
+fi
 
 makepkg -s -f --noconfirm
 EOF
@@ -89,7 +91,7 @@ job "polybar" {
     env = {
         "VERSION" = "3.3.0-1"
         "ARCH" = "x86_64"
-        "DEPS" = "curl alsa-lib pulseaudio i3-wm jsoncpp"
+        "DEPS" = "curl alsa-lib pulseaudio i3-wm jsoncpp git libidn2"
     }
 }
 
@@ -197,7 +199,7 @@ job "python35" {
 }
 
 job "touchegg" {
-    deps = ["builder", "frame", "grail", "geis"]
+    deps = ["frame", "grail", "geis"]
 
     env = {
         "VERSION" = "1.1.1-3"
@@ -244,13 +246,21 @@ job "minidcos" {
     }
 }
 
+job "hone" {
+    env = {
+        "VERSION" = "v0.5.0-1"
+        "ARCH" = "x86_64"
+    }
+}
+
 job "repo" {
     template = "builder"
 
     deps = [
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
         "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
-        "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom", "minidcos"
+        "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom", "minidcos",
+        "hone"
     ]
 
     inputs = [
