@@ -46,3 +46,6 @@
 [submodule "pkgs/zoom"]
 	path = pkgs/zoom
 	url = https://aur.archlinux.org/zoom.git
+[submodule "pkgs/keybase-bin"]
+	path = pkgs/keybase-bin
+	url = https://aur.archlinux.org/keybase-bin.git

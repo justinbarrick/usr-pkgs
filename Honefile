@@ -32,7 +32,7 @@ cache {
 template "default" {
     deps = ["builder"]
 
-    image = "justinbarrick/arch-builder:builder"
+    image = "justinbarrick/arch-builder:builder2"
 
     shell = <<EOF
 if [ ! -z "$DEPS" ]; then
@@ -83,7 +83,7 @@ job "builder" {
 
     shell = <<EOF
 kaniko --dockerfile=builder/Dockerfile --context=/build/builder/ \
-    --destination=${secrets.DOCKER_USER}/arch-builder:builder
+    --destination=${secrets.DOCKER_USER}/arch-builder:builder2
 EOF
 }
 
@@ -91,7 +91,7 @@ job "polybar" {
     env = {
         "VERSION" = "3.3.0-1"
         "ARCH" = "x86_64"
-        "DEPS" = "curl alsa-lib pulseaudio i3-wm jsoncpp git libidn2"
+        "DEPS" = "curl alsa-lib pulseaudio i3-wm jsoncpp git"
     }
 }
 
@@ -253,6 +253,21 @@ job "hone" {
     }
 }
 
+job "keybase-bin" {
+    deps = ["builder"]
+
+    env = {
+        "VERSION" = "2.13.1_20190115203650+eec94506e4-1"
+        "ARCH" = "x86_64"
+    }
+
+    inputs = [
+        "pkgs/keybase-bin/PKGBUILD",
+        "pkgs/keybase-bin/keybase.install"
+    ]
+}
+
+
 job "repo" {
     template = "builder"
 
@@ -260,7 +275,7 @@ job "repo" {
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
         "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
         "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom", "minidcos",
-        "hone"
+        "hone", "keybase-bin"
     ]
 
     inputs = [
