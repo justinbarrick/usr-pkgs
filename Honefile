@@ -1,7 +1,7 @@
 secrets = [
     "S3_ENDPOINT=sfo2.digitaloceanspaces.com",
     "S3_BUCKET=codesink-cache",
-    "S3_ENABLED=false",
+    "S3_ENABLED=true",
     "S3_ACCESS_KEY",
     "S3_SECRET_KEY",
     "DOCKER_USER",
@@ -25,7 +25,7 @@ cache {
         secret_key = "${secrets.S3_SECRET_KEY}"
         endpoint = "${secrets.S3_ENDPOINT}"
         bucket = "${secrets.S3_BUCKET}"
-        disabled = "${secrets.S3_ENABLED != "true"}"
+        disabled = "true"
     }
 }
 
@@ -267,6 +267,19 @@ job "keybase-bin" {
     ]
 }
 
+job "signal-desktop-bin" {
+    deps = ["builder"]
+
+    env = {
+        "VERSION" = "1.21.0-1"
+        "ARCH" = "x86_64"
+    }
+
+    inputs = [
+        "pkgs/signal-desktop-bin/PKGBUILD",
+        "pkgs/signal-desktop-bin/signal-desktop"
+    ]
+}
 
 job "repo" {
     template = "builder"
@@ -275,7 +288,7 @@ job "repo" {
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
         "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
         "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom", "minidcos",
-        "hone", "keybase-bin"
+        "hone", "keybase-bin", "signal-desktop-bin"
     ]
 
     inputs = [

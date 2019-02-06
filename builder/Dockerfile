@@ -1,6 +1,6 @@
-FROM base/archlinux:2019.01.01
+FROM archlinux/base:latest
 
-RUN pacman -Sy --noconfirm --force readline pacman bash gnupg libidn2 || :
+RUN pacman -Syu --noconfirm --force readline pacman bash gnupg libidn2 || :
 RUN pacman -Sy --noconfirm --force base-devel sudo binutils cmake && useradd -m -s /bin/bash user \
       && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 

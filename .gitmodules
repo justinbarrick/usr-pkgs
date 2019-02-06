@@ -49,3 +49,6 @@
 [submodule "pkgs/keybase-bin"]
 	path = pkgs/keybase-bin
 	url = https://aur.archlinux.org/keybase-bin.git
+[submodule "pkgs/signal-desktop-bin"]
+	path = pkgs/signal-desktop-bin
+	url = https://aur.archlinux.org/signal-desktop-bin.git
