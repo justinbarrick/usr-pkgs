@@ -1,0 +1,13 @@
+kind: pipeline
+name: default
+
+steps:
+- name: hone
+  image: justinbarrick/hone:test
+  commands:
+  - /bin/hone release
+  environment:
+    VAULT_TOKEN:
+      from_secret: vault-token
+    VAULT_ADDR:
+      from_secret: vault-addr
