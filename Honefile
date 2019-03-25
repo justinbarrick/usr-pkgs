@@ -248,7 +248,7 @@ job "minidcos" {
 
 job "hone" {
     env = {
-        "VERSION" = "v0.5.1-1"
+        "VERSION" = "v0.5.2-1"
         "ARCH" = "x86_64"
     }
 }
