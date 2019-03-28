@@ -25,7 +25,7 @@ cache {
         secret_key = "${secrets.S3_SECRET_KEY}"
         endpoint = "${secrets.S3_ENDPOINT}"
         bucket = "${secrets.S3_BUCKET}"
-        disabled = "true"
+        disabled = "${secrets.S3_ENABLED != "false"}"
     }
 }
 
@@ -273,6 +273,7 @@ job "signal-desktop-bin" {
     env = {
         "VERSION" = "1.23.1-1"
         "ARCH" = "x86_64"
+        "DEPS" = "libcups"
     }
 
     inputs = [
@@ -302,6 +303,7 @@ job "eclipse-mat" {
     env = {
         "VERSION" = "1.8.1-1"
         "ARCH" = "x86_64"
+        "DEPS" = "jre-openjdk"
     }
 
     inputs = [

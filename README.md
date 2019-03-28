@@ -32,6 +32,7 @@ Server = https://codesink-arch.sfo2.digitaloceanspaces.com/
 * [ttf-material-design-icons](https://aur.archlinux.org/packages/ttf-material-design-icons/) Material Design icon font
 * [ttf-unifont](https://aur.archlinux.org/packages/termsyn-font/)
 * [zoom](https://aur.archlinux.org/packages/zoom)
+* [eclipse-mat](https://aur.archlinux.org/packages/eclipse-mat) Eclipse Memory Analysis Tool
 
 # TODO
 
