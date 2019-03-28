@@ -2,11 +2,11 @@ secrets = [
     "S3_ENDPOINT=sfo2.digitaloceanspaces.com",
     "S3_BUCKET=codesink-cache",
     "S3_ENABLED=true",
-    "S3_ACCESS_KEY",
-    "S3_SECRET_KEY",
-    "DOCKER_USER",
-    "DOCKER_PASS",
-    "GITHUB_TOKEN"
+    "S3_ACCESS_KEY=",
+    "S3_SECRET_KEY=",
+    "DOCKER_USER=",
+    "DOCKER_PASS=",
+    "GITHUB_TOKEN="
 ]
 
 env = [
@@ -281,6 +281,22 @@ job "signal-desktop-bin" {
     ]
 }
 
+job "kubectl-bin" {
+    deps = ["builder"]
+
+    env = {
+        "VERSION" = "1.13.3-1"
+        "ARCH" = "x86_64"
+    }
+
+    inputs = [
+        "pkgs/kubectl-bin/PKGBUILD",
+        "pkgs/kubectl-bin/Makefile",
+        "pkgs/kubectl-bin/README.md"
+    ]
+}
+
+
 job "repo" {
     template = "builder"
 
@@ -288,7 +304,7 @@ job "repo" {
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
         "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
         "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom", "minidcos",
-        "hone", "keybase-bin", "signal-desktop-bin"
+        "hone", "keybase-bin", "signal-desktop-bin", "kubectl-bin"
     ]
 
     inputs = [

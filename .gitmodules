@@ -52,3 +52,6 @@
 [submodule "pkgs/signal-desktop-bin"]
 	path = pkgs/signal-desktop-bin
 	url = https://aur.archlinux.org/signal-desktop-bin.git
+[submodule "pkgs/kubectl-bin"]
+	path = pkgs/kubectl-bin
+	url = https://aur.archlinux.org/kubectl-bin.git
