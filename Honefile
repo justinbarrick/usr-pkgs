@@ -296,6 +296,19 @@ job "kubectl-bin" {
     ]
 }
 
+job "eclipse-mat" {
+    deps = ["builder"]
+
+    env = {
+        "VERSION" = "1.8.1-1"
+        "ARCH" = "x86_64"
+    }
+
+    inputs = [
+        "pkgs/eclipse-mat/PKGBUILD",
+        "pkgs/eclipse-mat/eclipse-mat.install"
+    ]
+}
 
 job "repo" {
     template = "builder"
@@ -304,7 +317,7 @@ job "repo" {
         "polybar", "cower", "pacaur", "termsyn-font", "ttf-font-awesome-4",
         "ttf-material-design-icons", "ttf-unifont", "libreswan", "pxz-git",
         "python35", "touchegg", "ppp", "geis", "grail", "frame", "zoom", "minidcos",
-        "hone", "keybase-bin", "signal-desktop-bin", "kubectl-bin"
+        "hone", "keybase-bin", "signal-desktop-bin", "kubectl-bin", "eclipse-mat"
     ]
 
     inputs = [

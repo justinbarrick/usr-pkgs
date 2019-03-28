@@ -55,3 +55,6 @@
 [submodule "pkgs/kubectl-bin"]
 	path = pkgs/kubectl-bin
 	url = https://aur.archlinux.org/kubectl-bin.git
+[submodule "pkgs/eclipse-mat"]
+	path = pkgs/eclipse-mat
+	url = https://aur.archlinux.org/eclipse-mat.git
